@@ -38,5 +38,17 @@ const products = [
         id: "牛角珠01",
         image: "images/horn01.jpg",
         specs: "材質：西藏氂牛角，直徑：1.8cm，形狀：不規則圓，孔徑：2mm大孔"
-    }
+    },
+    {
+        category: "月光石",
+        id: "月光石01",
+        image: "images/dzi01.jpg",
+        specs: "材質：月光石，尺寸：3.5cm長，鏈條：黑檀木念珠鍊，配飾：綠松石隔片"
+    },
+    {
+        category: "海藍寶",
+        id: "海藍寶01",
+        image: "images/dzi01.jpg",
+        specs: "樣式：海藍寶，尺寸：3.5cm長，鏈條：黑檀木念珠鍊，配飾：綠松石隔片"
+    },
 ];

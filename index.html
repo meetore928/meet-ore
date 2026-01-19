@@ -6,21 +6,15 @@
     <title>河石見面 Meet Ore</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        /* --- 變數設定：豐富的大地色與暖橘黃調 --- */
+        /* --- 變數設定 --- */
         :root {
-            /* 背景與基底 */
-            --bg-color: #FAF8F5;          /* 更溫暖的米白色 */
-            --card-bg: #FFFFFF;           /* 卡片純白背景 */
-            
-            /* 文字顏色 */
-            --primary-text: #4A3B32;      /* 深咖啡色，比原本更深一點，提升閱讀性 */
-            --secondary-text: #8C8279;    /* 淺灰褐，用於次要資訊 */
-            
-            /* 強調色系 */
-            --accent-color: #C67139;      /* 陶土橘 (Terracotta) - 用於主要按鈕、強調文字 */
-            --highlight-color: #D4AF37;   /* 復古金黃 (Gold) - 用於價格或圖標 */
-            --sub-tone: #7F8C72;          /* 橄欖綠 (Olive) - 用於邊框或脈輪標籤，增加層次 */
-            
+            --bg-color: #FAF8F5;          
+            --card-bg: #FFFFFF;           
+            --primary-text: #4A3B32;      
+            --secondary-text: #8C8279;    
+            --accent-color: #C67139;      
+            --highlight-color: #D4AF37;   
+            --sub-tone: #7F8C72;          
             --border-color: #E6DCD3;
         }
 
@@ -55,161 +49,119 @@
             display: flex; justify-content: space-between; align-items: center; 
             position: sticky; top: 0; z-index: 100;
             backdrop-filter: blur(8px); 
-            border-bottom: 1px solid rgba(198, 113, 57, 0.1); /* 微微的橘色邊框 */
+            border-bottom: 1px solid rgba(198, 113, 57, 0.1);
         }
         .menu-btn { font-size: 1.2rem; cursor: pointer; border: none; background: none; color: var(--primary-text); padding: 5px; }
         .header-title { flex-grow: 1; text-align: center; font-size: 1.3rem; font-weight: 700; letter-spacing: 0.2em; color: var(--primary-text); cursor: pointer; }
-        
-        /* 修復後的 IG Icon 樣式 */
         .header-icon { width: 22px; height: 22px; color: var(--primary-text); transition: color 0.3s; }
         .header-icon:hover { color: var(--accent-color); }
 
-        /* --- Sidebar --- */
-        #sidebar { position: fixed; left: -100%; top: 0; width: 80%; max-width: 300px; height: 100%; background: #FDFCFB; border-right: 1px solid var(--border-color); transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200; padding: 40px; box-shadow: 5px 0 20px rgba(0,0,0,0.05); }
+        /* --- Sidebar (更新樣式) --- */
+        #sidebar { 
+            position: fixed; left: -100%; top: 0; width: 85%; max-width: 320px; height: 100%; 
+            background: #FDFCFB; border-right: 1px solid var(--border-color); 
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 200; padding: 40px 0; 
+            box-shadow: 5px 0 20px rgba(0,0,0,0.05); overflow-y: auto;
+        }
         #sidebar.active { left: 0; }
-        #sidebar ul { list-style: none; padding: 0; margin-top: 40px; }
-        #sidebar li { padding: 15px 0; border-bottom: 1px solid var(--border-color); font-size: 1.05rem; cursor: pointer; color: var(--primary-text); transition: 0.2s;}
-        #sidebar li:hover { color: var(--accent-color); padding-left: 5px; }
-        .close-btn { text-align: right; font-size: 1.5rem; cursor: pointer; margin-bottom: 20px; color: var(--secondary-text);}
+        
+        .sidebar-header { padding: 0 30px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;}
+        .close-btn { font-size: 1.5rem; cursor: pointer; color: var(--secondary-text); }
+        
+        .nav-menu { list-style: none; padding: 0; margin: 0; }
+        
+        /* 第一層選單 */
+        .nav-item { border-bottom: 1px solid var(--border-color); }
+        .nav-link { 
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 30px; 
+            font-size: 1.05rem; cursor: pointer; color: var(--primary-text); transition: 0.2s; 
+            font-weight: 500;
+        }
+        .nav-link:hover { background-color: rgba(198, 113, 57, 0.05); color: var(--accent-color); }
+        .nav-link.active { color: var(--accent-color); font-weight: 700; }
+        
+        /* 下拉箭頭 */
+        .dropdown-icon { transition: transform 0.3s; font-size: 0.8rem; opacity: 0.5; }
+        .nav-item.open .dropdown-icon { transform: rotate(180deg); }
+
+        /* 第二層選單 (預設隱藏) */
+        .sub-menu { 
+            display: none; background-color: #FAF8F5; 
+            list-style: none; padding: 10px 0; 
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+        }
+        .nav-item.open .sub-menu { display: block; }
+        
+        .sub-link { 
+            display: block; padding: 12px 30px 12px 50px; /* 縮排 */
+            font-size: 0.95rem; color: var(--secondary-text); cursor: pointer; transition: 0.2s;
+        }
+        .sub-link:hover { color: var(--accent-color); padding-left: 55px; }
+
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(74, 59, 50, 0.4); display: none; z-index: 150; backdrop-filter: blur(2px); }
 
         /* --- Container --- */
         #container { max-width: 1000px; margin: 0 auto; padding: 0 15px 80px 15px; }
         
-        /* --- 首頁區塊：Logo & Hero (預設顯示) --- */
-        #home-banners-container {
-            display: block; /* 預設顯示 */
-        }
-
+        /* --- Banners --- */
+        #home-banners-container { display: block; }
         .brand-banner {
-            width: 100%;
-            height: 450px; 
-            background-color: #EFEBE7;
-            background-image: url('images/top_bg.jpg'); 
+            width: 100%; height: 450px; 
+            background-color: #EFEBE7; background-image: url('images/top_bg.jpg'); 
             background-size: cover; background-position: center;
             display: flex; justify-content: center; align-items: center;
-            margin-bottom: 20px; margin-top: 20px; border-radius: 4px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin: 20px 0; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-
-        .brand-logo-overlay {
-            max-width: 300px; max-height: 300px;
-            width: auto; height: auto;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.15)); 
-        }
+        .brand-logo-overlay { max-width: 300px; max-height: 300px; width: auto; height: auto; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.15)); }
 
         .hero-banner {
-            width: 100%;
-            height: 500px; 
-            background-color: #E8E0D9;
-            background-image: url('images/hero_bg.jpg');
+            width: 100%; height: 500px; 
+            background-color: #E8E0D9; background-image: url('images/hero_bg.jpg');
             background-size: cover; background-position: center;
             margin-bottom: 40px; border-radius: 4px;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column; 
-            padding: 20px;
-            position: relative;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: center; align-items: center; flex-direction: column; 
+            position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        
-        .hero-text { 
-            color: #ffffff;
-            font-size: 1.6rem; 
-            font-weight: 500;
-            text-align: center;
-            line-height: 2; 
-            letter-spacing: 0.15em;
-            text-shadow: 0 4px 12px rgba(0,0,0,0.7);
-        }
+        .hero-text { color: #ffffff; font-size: 1.6rem; font-weight: 500; text-align: center; line-height: 2; letter-spacing: 0.15em; text-shadow: 0 4px 12px rgba(0,0,0,0.7); }
 
-        /* --- 分類介紹欄位 (預設隱藏，點擊分類後顯示) --- */
+        /* --- 分類 Banner --- */
         #category-intro-banner {
-            display: none; /* 預設隱藏 */
-            width: 100%;
-            margin: 20px 0 40px 0;
-            background: #fff;
-            border-radius: 4px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 5px 20px rgba(198, 113, 57, 0.08); /* 微微的橘色光暈 */
+            display: none; width: 100%; margin: 20px 0 40px 0; background: #fff;
+            border-radius: 4px; overflow: hidden; border: 1px solid var(--border-color);
+            box-shadow: 0 5px 20px rgba(198, 113, 57, 0.08);
         }
+        .cat-banner-content { padding: 40px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .cat-title { font-size: 2rem; color: var(--accent-color); margin-bottom: 20px; letter-spacing: 0.1em; font-weight: 700; }
+        .cat-desc { font-size: 1rem; line-height: 1.8; color: var(--primary-text); max-width: 800px; margin-bottom: 30px; }
+        .cat-footer { width: 100%; max-width: 800px; border-top: 1px dashed var(--accent-color); padding-top: 20px; display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem; }
+        .cat-meta-item { display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .cat-label { background-color: var(--sub-tone); color: #fff; padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; letter-spacing: 0.05em; }
 
-        .cat-banner-content {
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
+        /* --- 訂製須知頁面 (Custom Guide) --- */
+        #custom-guide-view { display: none; margin-top: 40px; padding: 20px; }
+        .guide-container { max-width: 800px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 4px; border: 1px solid var(--border-color); box-shadow: 0 5px 25px rgba(0,0,0,0.05); }
+        .guide-header { text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid var(--accent-color); }
+        .guide-header h2 { font-size: 1.8rem; color: var(--primary-text); margin: 0; }
+        .guide-section { margin-bottom: 35px; }
+        .guide-title { font-size: 1.2rem; color: var(--accent-color); margin-bottom: 15px; font-weight: 700; display: flex; align-items: center; }
+        .guide-title::before { content: "✦"; margin-right: 10px; color: var(--highlight-color); }
+        .guide-content { font-size: 1rem; line-height: 2; color: var(--primary-text); text-align: justify; }
+        .guide-content ul { padding-left: 20px; margin: 0; }
+        .guide-content li { margin-bottom: 8px; }
 
-        .cat-title {
-            font-size: 2rem;
-            color: var(--accent-color);
-            margin-bottom: 20px;
-            letter-spacing: 0.1em;
-            font-weight: 700;
-        }
-
-        .cat-desc {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: var(--primary-text);
-            max-width: 800px;
-            margin-bottom: 30px;
-        }
-
-        .cat-footer {
-            width: 100%;
-            max-width: 800px;
-            border-top: 1px dashed var(--accent-color);
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            font-size: 0.95rem;
-        }
-
-        .cat-meta-item {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .cat-label {
-            background-color: var(--sub-tone);
-            color: #fff;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            letter-spacing: 0.05em;
-        }
-
-        /* --- 共用樣式 --- */
-        .section-title { 
-            text-align: center; margin: 30px 0 30px 0; font-size: 1.1rem; 
-            position: relative; color: var(--secondary-text); letter-spacing: 0.2em;
-        }
+        /* --- 共用 --- */
+        .section-title { text-align: center; margin: 30px 0 30px 0; font-size: 1.1rem; position: relative; color: var(--secondary-text); letter-spacing: 0.2em; }
         .section-title::after { content: ""; display: block; width: 40px; height: 2px; background: var(--accent-color); margin: 10px auto 0; }
 
-        /* --- Grid & Cards --- */
+        /* --- Product Grid --- */
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 15px; }
         @media (min-width: 768px) { .grid { grid-template-columns: repeat(4, 1fr); gap: 40px 25px; } }
-        
-        .card { 
-            cursor: pointer; transition: all 0.3s ease; 
-            background: var(--card-bg);
-            border-bottom: 3px solid transparent;
-        }
-        .card:hover { 
-            transform: translateY(-5px); 
-            border-bottom: 3px solid var(--accent-color);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-        }
+        .card { cursor: pointer; transition: all 0.3s ease; background: var(--card-bg); border-bottom: 3px solid transparent; }
+        .card:hover { transform: translateY(-5px); border-bottom: 3px solid var(--accent-color); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
         .img-box { width: 100%; padding-top: 125%; position: relative; background-color: #F2EFE9; overflow: hidden; margin-bottom: 12px; }
         .img-box img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
         .card:hover .img-box img { transform: scale(1.05); }
-        
         .card-info { text-align: center; padding: 0 5px 15px 5px; }
         .card-name { font-size: 1rem; margin-bottom: 6px; color: var(--primary-text); font-weight: 500; }
         .card-price { font-size: 0.9rem; color: var(--highlight-color); font-weight: 700; font-family: sans-serif; }
@@ -225,15 +177,7 @@
 
         /* --- Bottom Bar --- */
         .bottom-action-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; padding: 15px; box-shadow: 0 -2px 15px rgba(0,0,0,0.08); display: none; z-index: 900; }
-        .buy-btn { 
-            display: block; width: 100%; 
-            background-color: var(--primary-text); 
-            color: #fff; 
-            text-align: center; padding: 14px 0; 
-            font-size: 1.1rem; letter-spacing: 0.1em; 
-            transition: background 0.3s; 
-            border-radius: 4px;
-        }
+        .buy-btn { display: block; width: 100%; background-color: var(--primary-text); color: #fff; text-align: center; padding: 14px 0; font-size: 1.1rem; letter-spacing: 0.1em; transition: background 0.3s; border-radius: 4px; }
         .buy-btn:hover { background-color: var(--accent-color); }
         
         footer { text-align: center; margin-top: 60px; padding: 40px; font-size: 0.85rem; color: var(--secondary-text); border-top: 1px solid var(--border-color); }
@@ -242,8 +186,7 @@
             .hero-text { font-size: 1.3rem; }
             .brand-banner { height: 300px; }
             .hero-banner { height: 400px; }
-            .cat-banner-content { padding: 25px 15px; }
-            .cat-title { font-size: 1.5rem; }
+            .guide-container { padding: 25px; }
         }
     </style>
 </head>
@@ -260,19 +203,20 @@
     </header>
 
     <div id="sidebar">
-        <div class="close-btn" onclick="toggleMenu()">✕</div>
-        <ul id="category-list"></ul>
+        <div class="sidebar-header">
+            <span style="font-size:1.1rem; color:var(--accent-color); font-weight:700;">MENU</span>
+            <div class="close-btn" onclick="toggleMenu()">✕</div>
+        </div>
+        <ul id="nav-menu-container" class="nav-menu"></ul>
     </div>
     <div class="overlay" onclick="toggleMenu()"></div>
 
     <div id="container">
         <div id="home-view">
-            
             <div id="home-banners-container">
                 <div class="brand-banner">
                     <img src="images/logo.png" alt="Meet Ore Logo" class="brand-logo-overlay" onerror="this.style.display='none'">
                 </div>
-                
                 <div class="hero-banner">
                     <span class="hero-text">無論我們變成什麼樣子<br>每次見面都是久別重逢</span>
                 </div>
@@ -280,18 +224,16 @@
 
             <div id="category-intro-banner">
                 <div class="cat-banner-content">
-                    <div class="cat-title" id="cat-banner-title">礦石分類</div>
-                    <div class="cat-desc" id="cat-banner-desc">
-                        這裡將顯示關於此類礦石的詳細介紹。
-                    </div>
+                    <div class="cat-title" id="cat-banner-title"></div>
+                    <div class="cat-desc" id="cat-banner-desc"></div>
                     <div class="cat-footer">
                         <div class="cat-meta-item">
                             <span class="cat-label">主要功效</span>
-                            <span id="cat-banner-benefit">對應功效說明</span>
+                            <span id="cat-banner-benefit"></span>
                         </div>
                         <div class="cat-meta-item">
                             <span class="cat-label">對應脈輪</span>
-                            <span id="cat-banner-chakra">對應脈輪說明</span>
+                            <span id="cat-banner-chakra"></span>
                         </div>
                     </div>
                 </div>
@@ -315,6 +257,70 @@
                 </div>
             </div>
         </div>
+
+        <div id="custom-guide-view">
+            <div class="guide-container">
+                <div class="guide-header">
+                    <h2>訂製與購買須知</h2>
+                    <span style="display:block; margin-top:10px; color:#888; font-size:0.9rem;">READ BEFORE ORDERING</span>
+                </div>
+
+                <div class="guide-section">
+                    <div class="guide-title">訂製流程與訂金說明</div>
+                    <div class="guide-content">
+                        感謝您選擇河石見面為您打造專屬飾品。訂製服務需經過詳細溝通，確認設計方向與選材後，<strong>需先支付 50% 訂金</strong> 以保留材料與排程製作。
+                        <ul>
+                            <li>草圖/排列確認後，若需更換高單價主石，可能需補足差額。</li>
+                            <li>一旦開始製作，訂金將不予退還，以補償材料損耗與時間成本。</li>
+                            <li>尾款請於出貨前完成結清。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <div class="guide-title">製作工期</div>
+                    <div class="guide-content">
+                        手工製作需要時間與心力，一般現貨修改約需 <strong>3-5 個工作天</strong>，專屬客製化設計約需 <strong>7-14 個工作天</strong>（不含假日）。
+                        若遇特殊節日或材料缺貨，工期可能會延長，我們將在討論階段先行告知，請您保留充裕的等待時間。
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <div class="guide-title">修改與調整</div>
+                    <div class="guide-content">
+                        為確保成品符合您的期待，設計過程中提供 <strong>2 次免費微調</strong> 機會（如：更換隔珠、調整排列順序）。
+                        <ul>
+                            <li>超過 2 次修改，或成品完成後大幅度變更設計，將酌情收取工本費（$200/次）。</li>
+                            <li>尺寸調整：請提供精確淨手圍，若因誤報尺寸導致需重新穿製，需自行負擔來回運費及工本費。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <div class="guide-title">保固與維修服務</div>
+                    <div class="guide-content">
+                        我們重視每一件作品的陪伴。凡購買河石見面飾品，均享有以下服務：
+                        <ul>
+                            <li><strong>彈性線材：</strong> 享半年內免費換線服務一次（需自行負擔來回運費）。</li>
+                            <li><strong>金屬配件：</strong> 黃銅/14K包金氧化屬自然現象，可協助保養清潔，若需更換配件則依當下物價報價。</li>
+                            <li>人為因素導致的礦石破損不在保固範圍內。</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="guide-section">
+                    <div class="guide-title">智慧財產權聲明</div>
+                    <div class="guide-content">
+                        「河石見面 Meet Ore」之所有設計款、圖片影像與文字內容，均為品牌智慧財產。
+                        未經書面授權，請勿隨意盜用、重製或用於商業用途。客製化設計之版權歸本品牌所有，我們保留將成品照片用於作品集展示的權利。
+                    </div>
+                </div>
+
+                <div style="text-align:center; margin-top:50px;">
+                    <button onclick="goHome()" class="buy-btn" style="max-width:200px; margin:0 auto;">返回首頁</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="bottom-action-bar" id="bottom-bar">
@@ -327,16 +333,20 @@
 
     <script src="data.js"></script>
     <script>
-        const homeView = document.getElementById('home-view');
-        const detailView = document.getElementById('detail-view');
+        // DOM 元素
+        const views = {
+            home: document.getElementById('home-view'),
+            detail: document.getElementById('detail-view'),
+            guide: document.getElementById('custom-guide-view')
+        };
         const productList = document.getElementById('product-list');
         const sidebar = document.getElementById('sidebar');
         const overlay = document.querySelector('.overlay');
         const pageHeading = document.getElementById('page-heading');
         const bottomBar = document.getElementById('bottom-bar');
-        const categoryList = document.getElementById('category-list');
+        const navMenuContainer = document.getElementById('nav-menu-container');
         
-        // Banner 相關元素
+        // Banner 元素
         const homeBanners = document.getElementById('home-banners-container');
         const catBanner = document.getElementById('category-intro-banner');
         const catTitle = document.getElementById('cat-banner-title');
@@ -344,82 +354,64 @@
         const catBenefit = document.getElementById('cat-banner-benefit');
         const catChakra = document.getElementById('cat-banner-chakra');
 
-        let currentCategory = '全部';
-
-        // --- 模擬礦石資料庫 (用於隨機生成介紹內容) ---
+        // 礦石資料庫
         const stoneInfoDB = {
-            "白水晶": {
-                desc: "白水晶被稱為「水晶之王」，象徵著純淨與平衡。它能有效淨化負能量，提升專注力與記憶力，是所有能量石中最具代表性的基礎礦石。在紛擾的現代生活中，它如同一股清流，幫助佩戴者找回內心的平靜與清晰的思緒。",
-                benefit: "淨化磁場、提升專注、避邪擋煞",
-                chakra: "頂輪 (Crown Chakra)"
-            },
-            "紫水晶": {
-                desc: "紫水晶散發著高貴與神秘的光芒，自古以來便是靈性與智慧的象徵。它能平穩情緒，幫助深度放鬆與睡眠，同時也是「社交之石」，有助於招來貴人與善緣。適合需要大量思考或情緒容易波動的人佩戴。",
-                benefit: "開發智慧、幫助睡眠、招貴人",
-                chakra: "眉心輪 (Third Eye Chakra)"
-            },
-            "粉水晶": {
-                desc: "粉水晶是著名的「愛情之石」，其溫柔的粉色光芒能舒緩緊張情緒，療癒內心的創傷。它不僅能招攬桃花，更能改善人際關係，增進自我包容與愛的能力，讓周圍的氣氛變得和諧而溫暖。",
-                benefit: "招桃花、改善人際、舒緩情緒",
-                chakra: "心輪 (Heart Chakra)"
-            },
-            "黃水晶": {
-                desc: "黃水晶閃耀著如陽光般的金黃色澤，被稱為「財富之石」。它主聚財，能增強自信與行動力，消除恐懼與猶豫。對於創業者或業務人員來說，黃水晶是不可或缺的能量夥伴，能帶來積極向上的正能量。",
-                benefit: "招財聚寶、增強自信、提升企圖心",
-                chakra: "太陽輪 (Solar Plexus Chakra)"
-            },
-            "黑曜石": {
-                desc: "黑曜石擁有強大的吸納性，能強力吸收負面能量與病氣，是極佳的護身符。它能幫助佩戴者腳踏實地，排除雜念，在職場與生活中建立穩固的邊界，防止小人侵擾，帶來安全感。",
-                benefit: "避邪化煞、消除負能量、防小人",
-                chakra: "海底輪 (Root Chakra)"
-            }
+            "白水晶": { desc: "白水晶被稱為「水晶之王」，能有效淨化負能量，提升專注力與記憶力。", benefit: "淨化磁場、提升專注", chakra: "頂輪 (Crown Chakra)" },
+            "紫水晶": { desc: "紫水晶象徵智慧與靈性，能平穩情緒，幫助深度放鬆與睡眠。", benefit: "開發智慧、幫助睡眠", chakra: "眉心輪 (Third Eye Chakra)" },
+            "粉水晶": { desc: "粉水晶是溫柔的「愛情之石」，能舒緩緊張情緒，療癒內心創傷。", benefit: "招桃花、改善人際", chakra: "心輪 (Heart Chakra)" },
+            "黃水晶": { desc: "黃水晶主聚財，能增強自信與行動力，消除恐懼與猶豫。", benefit: "招財聚寶、增強自信", chakra: "太陽輪 (Solar Plexus Chakra)" },
+            "黑曜石": { desc: "黑曜石擁有強大的吸納性，能吸收負面能量，是極佳的護身符。", benefit: "避邪化煞、防小人", chakra: "海底輪 (Root Chakra)" }
         };
-
-        // 通用模板 (當分類找不到對應資料時使用)
-        const defaultStoneInfo = {
-            desc: "此類礦石是大自然的瑰寶，歷經億萬年的淬鍊而生。每一顆都擁有獨特的紋理與能量頻率，能與佩戴者的磁場產生共鳴。透過靜心感受，您將發現它所帶來的指引與療癒力量，讓生活回歸自然的平衡。",
-            benefit: "平衡能量、提升氣場、療癒身心",
-            chakra: "對應全身脈輪"
-        };
+        const defaultStoneInfo = { desc: "每一顆礦石都擁有獨特的能量頻率，能與佩戴者產生共鳴。", benefit: "平衡能量、療癒身心", chakra: "對應全身脈輪" };
 
         window.onload = function() {
-            if(typeof products === 'undefined'){ 
-                // 防止沒有 data.js 時報錯，方便測試
-                window.products = [
-                    {id: "測試水晶", category: "白水晶", image: "", specs: "產地：巴西, 重量：50g"},
-                    {id: "測試瑪瑙", category: "瑪瑙", image: "", specs: "顏色：紅, 尺寸：10mm"}
-                ];
-                // alert('請確認 data.js 檔案存在'); 
-            }
-            renderCategories(); 
+            if(typeof products === 'undefined'){ window.products = []; }
+            renderSidebarMenu(); // 渲染新的側邊欄結構
+            goHome(); // 預設進首頁
+        }
+
+        // --- 核心導航功能 ---
+        
+        // 切換視圖 helper
+        function switchView(viewName) {
+            Object.values(views).forEach(el => el.style.display = 'none');
+            views[viewName].style.display = 'block';
+            bottomBar.style.display = (viewName === 'detail') ? 'block' : 'none';
+            window.scrollTo(0,0);
+        }
+
+        // 回首頁 (重置狀態)
+        function goHome() {
+            switchView('home');
+            // 重置首頁 Banner
+            homeBanners.style.display = 'block';
+            catBanner.style.display = 'none';
+            pageHeading.innerText = '所有商品';
             renderList('全部');
+            closeMenu();
         }
 
-        function renderCategories() {
-            // 確保「全部」在第一個
-            const categories = ['全部', ...new Set(products.map(p => p.category))];
-            categoryList.innerHTML = categories.map(cat => `<li onclick="selectCategory('${cat}')">${cat}</li>`).join('');
+        // 顯示訂製須知
+        function showCustomGuide() {
+            switchView('guide');
+            closeMenu();
         }
 
+        // 選擇分類 (飾品子分類)
         function selectCategory(cat) {
-            currentCategory = cat;
+            switchView('home');
             
-            // --- 核心邏輯：切換 Banner ---
+            // 處理 Banner 邏輯
             if (cat === '全部') {
-                // 顯示首頁原本的兩個大 Banner
                 homeBanners.style.display = 'block';
                 catBanner.style.display = 'none';
                 pageHeading.innerText = '所有商品';
             } else {
-                // 隱藏首頁 Banner，顯示分類介紹卡
                 homeBanners.style.display = 'none';
                 catBanner.style.display = 'block';
                 pageHeading.innerText = `${cat}系列`;
 
-                // 取得介紹資料 (若無對應則使用預設值)
                 const info = stoneInfoDB[cat] || defaultStoneInfo;
-                
-                // 更新內容
                 catTitle.innerText = cat;
                 catDesc.innerText = info.desc;
                 catBenefit.innerText = info.benefit;
@@ -427,22 +419,76 @@
             }
 
             renderList(cat); 
-            toggleMenu();
-            window.scrollTo(0,0);
+            closeMenu();
         }
 
+        // --- 渲染側邊欄 (新結構) ---
+        function renderSidebarMenu() {
+            // 取得所有 data.js 裡的飾品分類
+            const jewelryCategories = [...new Set(products.map(p => p.category))];
+            
+            // 定義隨機原礦列表
+            const rawOres = ['烏拉圭紫晶鎮', '喜馬拉雅白水晶', '天青石原礦', '黑曜石柱', '黃鐵礦'];
+            
+            // 定義選物列表
+            const selections = ['淨化鼠尾草', '秘魯聖木', '能量蠟燭', '塔羅占卜'];
+
+            const menuHTML = `
+                <li class="nav-item">
+                    <div class="nav-link" onclick="goHome()">首頁</div>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link" onclick="showCustomGuide()">訂製須知</div>
+                </li>
+                
+                <li class="nav-item" id="menu-jewelry">
+                    <div class="nav-link" onclick="toggleSubMenu('menu-jewelry')">
+                        飾品 <span class="dropdown-icon">▼</span>
+                    </div>
+                    <ul class="sub-menu">
+                        <li><a class="sub-link" onclick="selectCategory('全部')">全部飾品</a></li>
+                        ${jewelryCategories.map(cat => `<li><a class="sub-link" onclick="selectCategory('${cat}')">${cat}</a></li>`).join('')}
+                    </ul>
+                </li>
+
+                <li class="nav-item" id="menu-ore">
+                    <div class="nav-link" onclick="toggleSubMenu('menu-ore')">
+                        原礦 <span class="dropdown-icon">▼</span>
+                    </div>
+                    <ul class="sub-menu">
+                        ${rawOres.map(name => `<li><a class="sub-link" onclick="alert('【${name}】即將上架，敬請期待！')">${name}</a></li>`).join('')}
+                    </ul>
+                </li>
+
+                <li class="nav-item" id="menu-select">
+                    <div class="nav-link" onclick="toggleSubMenu('menu-select')">
+                        選物 <span class="dropdown-icon">▼</span>
+                    </div>
+                    <ul class="sub-menu">
+                        ${selections.map(name => `<li><a class="sub-link" onclick="alert('【${name}】準備中...')">${name}</a></li>`).join('')}
+                    </ul>
+                </li>
+            `;
+            navMenuContainer.innerHTML = menuHTML;
+        }
+
+        // 展開/收合子選單
+        function toggleSubMenu(id) {
+            const item = document.getElementById(id);
+            // 關閉其他已開啟的 (Accordion效果，可選)
+            document.querySelectorAll('.nav-item.open').forEach(el => {
+                if(el.id !== id) el.classList.remove('open');
+            });
+            item.classList.toggle('open');
+        }
+
+        // --- 商品列表與詳情 (維持原樣) ---
         function renderList(cat) {
-            homeView.style.display = 'block'; 
-            detailView.style.display = 'none'; 
-            bottomBar.style.display = 'none';
-            
             const filtered = cat === '全部' ? products : products.filter(p => p.category === cat);
-            
             if (filtered.length === 0) {
                 productList.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #999;">此分類尚無商品</div>`;
                 return;
             }
-
             productList.innerHTML = filtered.map(p => `
                 <div class="card" onclick="showDetail('${p.id}')">
                     <div class="img-box"><img src="${p.image}" onerror="this.src='https://placehold.co/400x500/EFEBE7/C67139?text=No+Image'"></div>
@@ -453,8 +499,9 @@
 
         function showDetail(id) {
             const p = products.find(prod => prod.id === id); if(!p) return;
-            homeView.style.display = 'none'; detailView.style.display = 'block'; bottomBar.style.display = 'block'; window.scrollTo(0,0);
-            document.getElementById('detail-img').src = p.image; document.getElementById('detail-id').innerText = p.id;
+            switchView('detail');
+            document.getElementById('detail-img').src = p.image; 
+            document.getElementById('detail-id').innerText = p.id;
             const specsHtml = p.specs.split(/,|，/).map(s => {
                 const parts = s.split(/[:：]/);
                 if(parts.length > 1) { return `<div class="spec-item"><strong>${parts[0].trim()}</strong> ${parts.slice(1).join('：').trim()}</div>`; }
@@ -464,15 +511,12 @@
         }
 
         function goBack() { 
-            homeView.style.display = 'block'; 
-            detailView.style.display = 'none'; 
-            bottomBar.style.display = 'none'; 
-            // 保持原本的捲動位置體驗較好，或者回到頂部
-            window.scrollTo(0,0); 
+            switchView('home');
+            // 不需要重置 Banner，保持原本的瀏覽狀態
         }
-        
-        function goHome() { selectCategory('全部'); }
+
         function toggleMenu() { sidebar.classList.toggle('active'); overlay.style.display = sidebar.classList.contains('active') ? 'block' : 'none'; }
+        function closeMenu() { sidebar.classList.remove('active'); overlay.style.display = 'none'; }
     </script>
 </body>
 </html>
